@@ -1,0 +1,8 @@
+dependencies {
+  compile project(':ee-common')
+  compile "org.seleniumhq.selenium:selenium-api:$version_selenium"
+  compile "org.seleniumhq.selenium:selenium-firefox-driver:$version_selenium"
+  compile "org.seleniumhq.selenium:selenium-chrome-driver:$version_selenium"
+  compile "org.seleniumhq.selenium:selenium-support:$version_selenium"
+  compile "org.apache.httpcomponents:httpclient:$version_httpclient"
+}
