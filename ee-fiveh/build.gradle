@@ -1,4 +1,0 @@
-dependencies {
-    compile project(':ee-grab')
-    compile project(':ee-email')
-}
