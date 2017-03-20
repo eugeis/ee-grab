@@ -198,30 +198,34 @@ class CoursePage(browser: Browser, urlBase: String, val course: Course) : Moodle
         var courseContent = content()
 
         resources.forEach { resource ->
-            statusUpdater("Download resource: ${resource.title}")
-            var localLink: String
+            try {
+                statusUpdater("Download resource: ${resource.title}")
+                var localLink: String
 
-            when (resource.type) {
-                ResourceType.PDF, ResourceType.DOC -> {
-                    localLink = "${resource.key}.${resource.type.ext}"
-                    try {
-                        val targetFile = coursePath.resolve(localLink)
-                        if (!targetFile.exists()) {
-                            localLink = browser.downloadFile(resource.link, coursePath, resource.key, resource.type.ext)
+                when (resource.type) {
+                    ResourceType.PDF, ResourceType.DOC -> {
+                        localLink = "${resource.key}.${resource.type.ext}"
+                        try {
+                            val targetFile = coursePath.resolve(localLink)
+                            if (!targetFile.exists()) {
+                                localLink = browser.downloadFile(resource.link, coursePath, resource.key, resource.type.ext)
+                            }
+                        } catch (e: Exception) {
+                            val msg = "Download of $localLink not possible because of $e"
+                            log.error(msg)
+                            statusUpdater(msg)
                         }
-                    } catch (e: Exception) {
-                        val msg = "Download of $localLink not possible because of $e"
-                        log.error(msg)
-                        statusUpdater(msg)
+                    }
+                    else -> {
+                        val resourcePage = toResourcePage(resource)
+                        localLink = resourcePage.downloadTo(coursePath)
                     }
                 }
-                else -> {
-                    val resourcePage = toResourcePage(resource)
-                    localLink = resourcePage.downloadTo(coursePath)
-                }
+                courseContent = courseContent.replace("\"${resource.link}\"", "\"$localLink\"")
+                toUrlIfNotCurrent()
+            } catch (e: Exception) {
+                statusUpdater("Download resource failed: ${resource.title} becuase $e")
             }
-            courseContent = courseContent.replace("\"${resource.link}\"", "\"$localLink\"")
-            toUrlIfNotCurrent()
         }
         saveAsHtml(courseContent, course.title, coursePath.resolve(indexFileName))
         return ret
