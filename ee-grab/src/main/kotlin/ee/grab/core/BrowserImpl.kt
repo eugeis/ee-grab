@@ -24,6 +24,7 @@ package ee.grab.core
 import ee.common.ext.exists
 import ee.common.ext.mkdirs
 import ee.common.ext.toConvertUmlauts
+import ee.common.ext.toKey
 import org.apache.http.client.CookieStore
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.BasicCookieStore
@@ -60,7 +61,7 @@ internal class BrowserImpl(val driver: WebDriver) : Browser, WebDriver by driver
 
     override fun downloadFile(url: String, target: Path, fileName: String, fileExt: String, prefix: String): String {
         var ret = "$prefix$fileName.$fileExt"
-        val path = target.resolve(ret)
+        var path = target.resolve(ret)
         if (!path.exists()) {
             try {
                 val cookieStore = seleniumCookiesToCookieStore()
@@ -79,24 +80,27 @@ internal class BrowserImpl(val driver: WebDriver) : Browser, WebDriver by driver
                     val currentFileName = response.getHeaders("Content-Disposition").firstOrNull()?.value?.
                             substringAfterLast("filename=\"")?.substringBeforeLast("\"")
                     if (currentFileName != null) {
-                        ret = "$prefix${URLDecoder.decode(currentFileName, "UTF-8").toConvertUmlauts()}"
+                        ret = "$prefix${URLDecoder.decode(currentFileName, "UTF-8").toKey()}"
                     } else {
                         val type = MimeType.findByContentType(entity.contentType.value)
                         if (type != null) {
                             ret = "$prefix$fileName.${type.name}"
                         }
                     }
-                    path.parent.mkdirs()
-                    val outputFile = path.toFile()
-                    val bos = BufferedOutputStream(FileOutputStream(outputFile))
-                    var read = bis.read()
-                    while (read != -1) {
-                        bos.write(read)
-                        read = bis.read()
+                    path = target.resolve(ret)
+                    if (!path.exists()) {
+                        path.parent.mkdirs()
+                        val outputFile = path.toFile()
+                        val bos = BufferedOutputStream(FileOutputStream(outputFile))
+                        var read = bis.read()
+                        while (read != -1) {
+                            bos.write(read)
+                            read = bis.read()
+                        }
+                        bis.close()
+                        bos.close()
+                        println("Downloaded $outputFile " + outputFile.length() + " bytes. " + entity!!.contentType)
                     }
-                    bis.close()
-                    bos.close()
-                    println("Downloaded $outputFile " + outputFile.length() + " bytes. " + entity!!.contentType)
                 } else {
                     println("Download failed of $ret!")
                 }
