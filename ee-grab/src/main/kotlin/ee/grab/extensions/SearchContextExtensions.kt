@@ -38,7 +38,12 @@ fun SearchContext.`$`(selector: String, vararg indexes: Int): List<WebElement> {
 }
 
 fun SearchContext.find(selector: String, index: Int): WebElement {
-  return findElements(By.cssSelector(selector))[index]
+  val elements = findElements(By.cssSelector(selector))
+  if(elements.isNotEmpty()) {
+    return elements[index]
+  } else {
+    throw IllegalArgumentException("There is no element for the selector $selector")
+  }
 }
 
 fun SearchContext.find(selector: String, range: IntRange): List<WebElement> {

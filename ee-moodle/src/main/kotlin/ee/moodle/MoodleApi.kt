@@ -108,7 +108,9 @@ class DashboardPage(browser: Browser, urlBase: String, url: String = "$urlBase/m
     }
 
     val courses by lazy {
-        courseOverview.`$`("a[href*='$urlBase/course/']").map { Course(it.getAttribute("title"), it.getAttribute("href")) }
+        courseOverview.`$`("a[href*='$urlBase/course/']").map {
+            Course(it.getAttribute("title").trim(), it.getAttribute("href"))
+        }
     }
 
     fun content(): String {
@@ -136,6 +138,7 @@ class DashboardPage(browser: Browser, urlBase: String, url: String = "$urlBase/m
 }
 
 class CoursePage(browser: Browser, urlBase: String, val course: Course) : MoodlePage(browser, urlBase, course.link) {
+    private val excludeByTitle = setOf("Feedbackformular")
     private val content by lazy {
         `$`("div.course-content", 0)
     }
@@ -143,7 +146,7 @@ class CoursePage(browser: Browser, urlBase: String, val course: Course) : Moodle
     val resources by lazy {
         content.`$`("a[href*='$urlBase/mod/']").map {
             Resource(findResourceTitle(it), it.getAttribute("href"), findResourceType(it))
-        }
+        }.filter { !excludeByTitle.contains(it.title) }
     }
 
     fun content(): String {
@@ -198,30 +201,34 @@ class CoursePage(browser: Browser, urlBase: String, val course: Course) : Moodle
         var courseContent = content()
 
         resources.forEach { resource ->
-            statusUpdater("Download resource: ${resource.title}")
-            var localLink: String
+            try {
+                statusUpdater("Download resource: ${resource.title}")
+                var localLink: String
 
-            when (resource.type) {
-                ResourceType.PDF, ResourceType.DOC -> {
-                    localLink = "${resource.key}.${resource.type.ext}"
-                    try {
-                        val targetFile = coursePath.resolve(localLink)
-                        if (!targetFile.exists()) {
-                            localLink = browser.downloadFile(resource.link, coursePath, resource.key, resource.type.ext)
+                when (resource.type) {
+                    ResourceType.PDF, ResourceType.DOC -> {
+                        localLink = "${resource.key}.${resource.type.ext}"
+                        try {
+                            val targetFile = coursePath.resolve(localLink)
+                            if (!targetFile.exists()) {
+                                localLink = browser.downloadFile(resource.link, coursePath, resource.key, resource.type.ext)
+                            }
+                        } catch (e: Exception) {
+                            val msg = "Download of $localLink not possible because of $e"
+                            log.error(msg)
+                            statusUpdater(msg)
                         }
-                    } catch (e: Exception) {
-                        val msg = "Download of $localLink not possible because of $e"
-                        log.error(msg)
-                        statusUpdater(msg)
+                    }
+                    else -> {
+                        val resourcePage = toResourcePage(resource)
+                        localLink = resourcePage.downloadTo(coursePath)
                     }
                 }
-                else -> {
-                    val resourcePage = toResourcePage(resource)
-                    localLink = resourcePage.downloadTo(coursePath)
-                }
+                courseContent = courseContent.replace("\"${resource.link}\"", "\"$localLink\"")
+                toUrlIfNotCurrent()
+            } catch (e: Exception) {
+                statusUpdater("Download resource failed: ${resource.title} becuase $e")
             }
-            courseContent = courseContent.replace("\"${resource.link}\"", "\"$localLink\"")
-            toUrlIfNotCurrent()
         }
         saveAsHtml(courseContent, course.title, coursePath.resolve(indexFileName))
         return ret
@@ -288,9 +295,7 @@ class Moodle() {
         val ret: Result<DashboardPage>
         val currentBrowser = startBrowser()
         var loginPage: LoginPage = LoginPage(currentBrowser, urlBase)
-        if (!loginPage.verifyAt()) {
-            loginPage = currentBrowser.to { loginPage }
-        }
+        loginPage.toUrlIfNotCurrent()
         if (loginPage.waitFor({ ExpectedCondition { loginPage.verifyAt() } })) {
             ret = loginPage.login(username, password)
             if (ret.ok) {
@@ -306,7 +311,13 @@ class Moodle() {
 
     private fun startBrowser(): Browser {
         if (browser == null) {
-            browser = Browser.new(ChromeDriver())
+            try {
+                browser = Browser.new(ChromeDriver())
+            } catch (e: Exception) {
+                System.setProperty("webdriver.chrome.driver",
+                        "/Users/ee/d/ee-grab/ee-grab/drivers/chromedriver");
+                browser = Browser.new(ChromeDriver())
+            }
         }
         return browser!!
     }
