@@ -23,7 +23,6 @@ package ee.grab.core
 
 import ee.common.ext.exists
 import ee.common.ext.mkdirs
-import ee.common.ext.toConvertUmlauts
 import ee.common.ext.toKey
 import org.apache.http.client.CookieStore
 import org.apache.http.client.methods.HttpGet
