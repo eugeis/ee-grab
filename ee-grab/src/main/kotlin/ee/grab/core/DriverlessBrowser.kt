@@ -16,6 +16,7 @@
 
 /* ***************************************************************************/
 package ee.grab.core
+
 /* ***************************************************************************/
 
 /* ***************************************************************************/
@@ -29,67 +30,67 @@ import java.nio.file.Path
 
 /* ***************************************************************************/
 class DriverlessBrowser : Browser {
-  override val js: JavaScriptExecutor
-    get() = throw UnsupportedOperationException()
+    override val js: JavaScriptExecutor
+        get() = throw UnsupportedOperationException()
 
-  override fun getWindowHandles(): MutableSet<String>? {
-    throw UnsupportedOperationException()
-  }
+    override fun getWindowHandles(): MutableSet<String>? {
+        throw UnsupportedOperationException()
+    }
 
-  override fun findElement(by: By?): WebElement? {
-    throw UnsupportedOperationException()
-  }
+    override fun findElement(by: By?): WebElement? {
+        throw UnsupportedOperationException()
+    }
 
-  override fun getWindowHandle(): String? {
-    throw UnsupportedOperationException()
-  }
+    override fun getWindowHandle(): String? {
+        throw UnsupportedOperationException()
+    }
 
-  override fun getPageSource(): String? {
-    throw UnsupportedOperationException()
-  }
+    override fun getPageSource(): String? {
+        throw UnsupportedOperationException()
+    }
 
-  override fun navigate(): WebDriver.Navigation? {
-    throw UnsupportedOperationException()
-  }
+    override fun navigate(): WebDriver.Navigation? {
+        throw UnsupportedOperationException()
+    }
 
-  override fun manage(): WebDriver.Options? {
-    throw UnsupportedOperationException()
-  }
+    override fun manage(): WebDriver.Options? {
+        throw UnsupportedOperationException()
+    }
 
-  override fun getCurrentUrl(): String? {
-    throw UnsupportedOperationException()
-  }
+    override fun getCurrentUrl(): String? {
+        throw UnsupportedOperationException()
+    }
 
-  override fun getTitle(): String? {
-    throw UnsupportedOperationException()
-  }
+    override fun getTitle(): String? {
+        throw UnsupportedOperationException()
+    }
 
-  override fun get(url: String?) {
-    throw UnsupportedOperationException()
-  }
+    override fun get(url: String?) {
+        throw UnsupportedOperationException()
+    }
 
-  override fun switchTo(): WebDriver.TargetLocator? {
-    throw UnsupportedOperationException()
-  }
+    override fun switchTo(): WebDriver.TargetLocator? {
+        throw UnsupportedOperationException()
+    }
 
-  override fun close() {
-    throw UnsupportedOperationException()
-  }
+    override fun close() {
+        throw UnsupportedOperationException()
+    }
 
-  override fun quit() {
-    throw UnsupportedOperationException()
-  }
+    override fun quit() {
+        throw UnsupportedOperationException()
+    }
 
-  override fun findElements(by: By?): MutableList<WebElement>? {
-    throw UnsupportedOperationException()
-  }
+    override fun findElements(by: By?): MutableList<WebElement>? {
+        throw UnsupportedOperationException()
+    }
 
-  override fun <T> waitFor(timeOutInSeconds: Long, sleepInMillis: Long, isTrue: () -> ExpectedCondition<T>): T {
-    throw UnsupportedOperationException()
-  }
+    override fun <T> waitFor(timeOutInSeconds: Long, sleepInMillis: Long, isTrue: () -> ExpectedCondition<T>): T {
+        throw UnsupportedOperationException()
+    }
 
-  override fun downloadFile(url: String, target: Path, fileName: String, fileExt: String, prefix: String): String {
-    throw UnsupportedOperationException()
-  }
+    override fun downloadFile(url: String, target: Path, fileName: String, fileExt: String, prefix: String): String {
+        throw UnsupportedOperationException()
+    }
 }
 /* ***************************************************************************/

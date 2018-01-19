@@ -16,22 +16,24 @@
 
 /* ***************************************************************************/
 package ee.grab.core
+
 /* ***************************************************************************/
 
 /* ***************************************************************************/
 import org.openqa.selenium.support.ui.ExpectedCondition
+
 /* ***************************************************************************/
 
 /* ***************************************************************************/
 interface WaitingSupport {
-  fun <T> waitFor(timeOutInSeconds: Long, sleepInMillis: Long, isTrue: () -> ExpectedCondition<T>): T
+    fun <T> waitFor(timeOutInSeconds: Long, sleepInMillis: Long, isTrue: () -> ExpectedCondition<T>): T
 
-  fun <T> waitFor(timeOutInSeconds: Long, isTrue: () -> ExpectedCondition<T>): T {
-    return waitFor(timeOutInSeconds, 1000L, isTrue)
-  }
+    fun <T> waitFor(timeOutInSeconds: Long, isTrue: () -> ExpectedCondition<T>): T {
+        return waitFor(timeOutInSeconds, 1000L, isTrue)
+    }
 
-  fun <T> waitFor(isTrue: () -> ExpectedCondition<T>): T {
-    return waitFor(10L, isTrue)
-  }
+    fun <T> waitFor(isTrue: () -> ExpectedCondition<T>): T {
+        return waitFor(10L, isTrue)
+    }
 }
 /* ***************************************************************************/

@@ -188,7 +188,7 @@ class EmailManagerPage : FivehPage() {
                 val forwardigRows = tables.get(1).`$`("tr")
                 forwardigRows.subList(1, forwardigRows.size).forEach {
                     val forwarding = Forwarding(EmailAddress(it.`$`("td", 0).text),
-                            it.`$`("td", 1).text.split("<br>").map { EmailAddress(it) }.toMutableList())
+                        it.`$`("td", 1).text.split("<br>").map { EmailAddress(it) }.toMutableList())
                     forwardings.add(forwarding)
                 }
             }

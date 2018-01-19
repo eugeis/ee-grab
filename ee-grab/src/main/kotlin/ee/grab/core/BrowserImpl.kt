@@ -50,7 +50,7 @@ internal class BrowserImpl(val driver: WebDriver) : Browser, WebDriver by driver
             if (driver is JavascriptExecutor) {
                 return when (async) {
                     false -> driver.executeScript(script(), *args)
-                    else -> driver.executeAsyncScript(script(), *args)
+                    else  -> driver.executeAsyncScript(script(), *args)
                 }
             }
 
@@ -76,8 +76,9 @@ internal class BrowserImpl(val driver: WebDriver) : Browser, WebDriver by driver
                 val entity = response.entity
                 if (entity != null) {
                     val bis = BufferedInputStream(entity.content)
-                    val currentFileName = response.getHeaders("Content-Disposition").firstOrNull()?.value?.
-                            substringAfterLast("filename=\"")?.substringBeforeLast("\"")
+                    val currentFileName =
+                        response.getHeaders("Content-Disposition").firstOrNull()?.value?.substringAfterLast(
+                            "filename=\"")?.substringBeforeLast("\"")
                     if (currentFileName != null) {
                         ret = "$prefix${URLDecoder.decode(currentFileName, "UTF-8").toKey()}"
                     } else {
@@ -129,8 +130,7 @@ internal class BrowserImpl(val driver: WebDriver) : Browser, WebDriver by driver
     }
 
     override fun <T> waitFor(timeOutInSeconds: Long, sleepInMillis: Long, isTrue: () -> ExpectedCondition<T>): T {
-        return WebDriverWait(driver, timeOutInSeconds, sleepInMillis)
-                .until(isTrue())
+        return WebDriverWait(driver, timeOutInSeconds, sleepInMillis).until(isTrue())
     }
 }
 /* ***************************************************************************/

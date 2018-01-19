@@ -16,47 +16,49 @@
 
 /* ***************************************************************************/
 package ee.grab.extensions
+
 /* ***************************************************************************/
 
 /* ***************************************************************************/
 import org.openqa.selenium.By
 import org.openqa.selenium.SearchContext
 import org.openqa.selenium.WebElement
+
 /* ***************************************************************************/
 
 /* ***************************************************************************/
 fun SearchContext.`$`(selector: String, index: Int): WebElement {
-  return find(selector, index)
+    return find(selector, index)
 }
 
 fun SearchContext.`$`(selector: String, range: IntRange): List<WebElement> {
-  return find(selector, range)
+    return find(selector, range)
 }
 
 fun SearchContext.`$`(selector: String, vararg indexes: Int): List<WebElement> {
-  return find(selector, *indexes)
+    return find(selector, *indexes)
 }
 
 fun SearchContext.find(selector: String, index: Int): WebElement {
-  val elements = findElements(By.cssSelector(selector))
-  if(elements.isNotEmpty()) {
-    return elements[index]
-  } else {
-    throw IllegalArgumentException("There is no element for the selector $selector")
-  }
+    val elements = findElements(By.cssSelector(selector))
+    if (elements.isNotEmpty()) {
+        return elements[index]
+    } else {
+        throw IllegalArgumentException("There is no element for the selector $selector")
+    }
 }
 
 fun SearchContext.find(selector: String, range: IntRange): List<WebElement> {
-  return findElements(By.cssSelector(selector)).slice(range)
+    return findElements(By.cssSelector(selector)).slice(range)
 }
 
 fun SearchContext.find(selector: String, vararg indexes: Int): List<WebElement> {
-  val elements = findElements(By.cssSelector(selector))
+    val elements = findElements(By.cssSelector(selector))
 
-  if (indexes.size == 0) {
-    return elements
-  }
+    if (indexes.size == 0) {
+        return elements
+    }
 
-  return elements.slice(indexes.asList())
+    return elements.slice(indexes.asList())
 }
 /* ***************************************************************************/

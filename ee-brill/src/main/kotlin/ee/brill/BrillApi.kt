@@ -13,8 +13,7 @@ import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.regex.Pattern
 
 data class Item(val name: String, val url: String, val urlSuffix: String,
-                val key: String = urlSuffix.substringAfterLast("/"), val filePath: String = "$urlSuffix.html") {
-}
+    val key: String = urlSuffix.substringAfterLast("/"), val filePath: String = "$urlSuffix.html") {}
 
 var linkValidator: Pattern = "".toPattern()
 val handeledLinks = hashSetOf<String>()
@@ -22,7 +21,7 @@ val mediaToDownload = ConcurrentLinkedDeque<Item>()
 val articleToDownload = ConcurrentLinkedDeque<Item>()
 val browseToDownload = ConcurrentLinkedDeque<Item>()
 private fun isToHandle(it: Item, validateLink: Boolean = true) =
-        !handeledLinks.contains(it.url) && (!validateLink || linkValidator.matcher(it.url).matches())
+    !handeledLinks.contains(it.url) && (!validateLink || linkValidator.matcher(it.url).matches())
 
 private fun extractLink(it: WebElement) = it.getAttribute("href").substringBeforeLast("?").substringBeforeLast("#")
 
@@ -312,8 +311,7 @@ class Brill() {
 private fun saveAsHtml(content: String, title: String, base: Path, target: Path) {
     val styleFile = "${target.parent.relativize(base.resolve("style.css"))}"
     target.parent.mkdirs()
-    target.toFile().printWriter().use {
-        out ->
+    target.toFile().printWriter().use { out ->
         out.println("""<hmtl><head><meta http-equiv="content-type" content="text/php; charset=UTF-8">
     <title>$title</title>
         <link href="$styleFile" rel="stylesheet">

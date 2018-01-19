@@ -4,7 +4,8 @@ import ee.common.ext.logger
 import ee.email.Forwarding
 import ee.grab.core.Browser
 
-class AddOrReplaceForwardingsCommand(val host: String, val forwardings: List<Forwarding>, val user: String, val password: String) {
+class AddOrReplaceForwardingsCommand(val host: String, val forwardings: List<Forwarding>, val user: String,
+    val password: String) {
     val log = logger()
     val nop: Boolean = false
 

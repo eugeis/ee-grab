@@ -15,7 +15,7 @@ open class RuLitPage(browser: Browser, url: String = "") : Page(browser, url) {
 }
 
 class BookPage(browser: Browser, val book: String, val page: Int = 1,
-               url: String = "http://www.${RuLitPage.HOST}.me/books/$book-$page.php") : RuLitPage(browser, url) {
+    url: String = "http://www.${RuLitPage.HOST}.me/books/$book-$page.php") : RuLitPage(browser, url) {
     override val at = delegatesTo<Browser, Boolean> {
         findElement(By.id("current_page")).text.toInt() == page
     }
@@ -40,9 +40,9 @@ class BookPage(browser: Browser, val book: String, val page: Int = 1,
     fun content(): List<String> {
         browser.at({ this })
 
-        return contentDiv.findElements(By.ByXPath("*"))
-                .filter { "p".equals(it.tagName) || ("div".equals(it.tagName) && "title".equals(it.getAttribute("class"))) }
-                .map { it.getAttribute("outerHTML") }
+        return contentDiv.findElements(By.ByXPath("*")).filter {
+            "p".equals(it.tagName) || ("div".equals(it.tagName) && "title".equals(it.getAttribute("class")))
+        }.map { it.getAttribute("outerHTML") }
     }
 }
 

@@ -5,7 +5,9 @@ import org.openqa.selenium.SearchContext
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.support.ui.ExpectedCondition
 
-abstract class Page(var browser: Browser = DriverlessBrowser(), open val url: String = "") : JavaScriptSupport, SearchContext, WaitingSupport {
+abstract class Page(var browser: Browser = DriverlessBrowser(), open val url: String = "") : JavaScriptSupport,
+                                                                                             SearchContext,
+                                                                                             WaitingSupport {
     open val at: Browser.() -> Boolean = { url.isNotEmpty() || this.currentUrl.startsWith(url) }
 
     override val js: JavaScriptExecutor

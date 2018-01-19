@@ -4,44 +4,46 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1">
-   <center>
-      <TableView prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-        <columns>
-          <TableColumn prefWidth="75.0" text="Courses" />
-        </columns>
-      </TableView>
-   </center>
-   <bottom>
-      <BorderPane BorderPane.alignment="CENTER">
-         <right>
-            <HBox alignment="CENTER_RIGHT" BorderPane.alignment="CENTER">
-               <children>
-                <Button mnemonicParsing="false" text="Download All">
-                     <HBox.margin>
-                        <Insets left="2.0" />
-                     </HBox.margin>
-                  </Button>
-                  <Button mnemonicParsing="false" text="Download Selected">
-                     <HBox.margin>
-                        <Insets left="2.0" />
-                     </HBox.margin>
-                  </Button>
-               </children>
-               <BorderPane.margin>
-                  <Insets left="10.0" />
-               </BorderPane.margin>
-            </HBox>
-         </right>
-         <center>
-            <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
-               <children>
-                  <Label text="Download to: " />
-                  <TextField HBox.hgrow="ALWAYS" />
-                  <Button mnemonicParsing="false" text="..." />
-               </children>
-            </HBox>
-         </center>
-      </BorderPane>
-   </bottom>
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+            minWidth="-Infinity"
+            prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.60">
+    <center>
+        <TableView prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <columns>
+                <TableColumn prefWidth="75.0" text="Courses"/>
+            </columns>
+        </TableView>
+    </center>
+    <bottom>
+        <BorderPane BorderPane.alignment="CENTER">
+            <right>
+                <HBox alignment="CENTER_RIGHT" BorderPane.alignment="CENTER">
+                    <children>
+                        <Button mnemonicParsing="false" text="Download All">
+                            <HBox.margin>
+                                <Insets left="2.0"/>
+                            </HBox.margin>
+                        </Button>
+                        <Button mnemonicParsing="false" text="Download Selected">
+                            <HBox.margin>
+                                <Insets left="2.0"/>
+                            </HBox.margin>
+                        </Button>
+                    </children>
+                    <BorderPane.margin>
+                        <Insets left="10.0"/>
+                    </BorderPane.margin>
+                </HBox>
+            </right>
+            <center>
+                <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
+                    <children>
+                        <Label text="Download to: "/>
+                        <TextField HBox.hgrow="ALWAYS"/>
+                        <Button mnemonicParsing="false" text="..."/>
+                    </children>
+                </HBox>
+            </center>
+        </BorderPane>
+    </bottom>
 </BorderPane>

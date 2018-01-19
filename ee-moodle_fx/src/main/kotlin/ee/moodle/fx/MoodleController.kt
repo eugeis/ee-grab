@@ -3,7 +3,8 @@ package ee.moodle.fx
 import ee.moodle.Course
 import ee.moodle.Moodle
 import javafx.application.Platform
-import tornadofx.*
+import tornadofx.Controller
+import tornadofx.FX
 import java.nio.file.Paths
 
 class MoodleController : Controller() {
@@ -82,8 +83,7 @@ class MoodleController : Controller() {
                 moodle.dashboardPage?.toCoursePage(course)?.downloadTo(targetPath, statusUpdater)
             }
             statusUpdater("Done")
-        } ui {
-        }
+        } ui {}
     }
 
 
@@ -92,8 +92,7 @@ class MoodleController : Controller() {
             storeOrRemoveSettings(target, remember)
             moodle.dashboardPage?.downloadTo(Paths.get(target), statusUpdater)
             statusUpdater("Done")
-        } ui {
-        }
+        } ui {}
     }
 
     private fun storeOrRemoveSettings(target: String, remember: Boolean) {

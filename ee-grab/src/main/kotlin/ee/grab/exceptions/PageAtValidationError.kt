@@ -16,11 +16,12 @@
 
 /* ***************************************************************************/
 package ee.grab.exceptions
+
 /* ***************************************************************************/
 
 /* ***************************************************************************/
 class PageAtValidationError : BalinException {
-  constructor() : super()
-  constructor(message: String) : super(message)
+    constructor() : super()
+    constructor(message: String) : super(message)
 }
 /* ***************************************************************************/

@@ -16,29 +16,30 @@
 
 /* ***************************************************************************/
 package ee.grab.core
+
 /* ***************************************************************************/
 
 /* ***************************************************************************/
 interface JavaScriptExecutor {
-  fun execute(vararg args: Any, async: Boolean = false, script: () -> String): Any?
+    fun execute(vararg args: Any, async: Boolean = false, script: () -> String): Any?
 
-  fun call(vararg args: Any, async: Boolean = false, script: () -> String): Any? {
-    return execute(*args, async=async, script=script)
-  }
-
-  fun run(vararg args: Any, async: Boolean = false, script: () -> String): Any? {
-    return execute(*args, async=async, script=script)
-  }
-
-  operator fun get(value: String): Any? {
-    return execute { "return $value;" }
-  }
-
-  operator fun set(field: String, value: Any?) {
-    when (value) {
-      null -> execute { "window.$field = null;" }
-      else -> execute(value) { "window.$field = arguments[0];" }
+    fun call(vararg args: Any, async: Boolean = false, script: () -> String): Any? {
+        return execute(*args, async = async, script = script)
     }
-  }
+
+    fun run(vararg args: Any, async: Boolean = false, script: () -> String): Any? {
+        return execute(*args, async = async, script = script)
+    }
+
+    operator fun get(value: String): Any? {
+        return execute { "return $value;" }
+    }
+
+    operator fun set(field: String, value: Any?) {
+        when (value) {
+            null -> execute { "window.$field = null;" }
+            else -> execute(value) { "window.$field = arguments[0];" }
+        }
+    }
 }
 /* ***************************************************************************/

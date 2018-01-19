@@ -10,7 +10,8 @@ import java.net.URLDecoder
 import java.nio.file.Path
 
 
-open class OaiPage(browser: Browser, var urlBase: String, val handle: String = "", url: String = "$urlBase$handle") : Page(browser, url) {
+open class OaiPage(browser: Browser, var urlBase: String, val handle: String = "", url: String = "$urlBase$handle") :
+        Page(browser, url) {
     val indexFileName = "index.html"
 
     init {
@@ -22,7 +23,7 @@ open class OaiPage(browser: Browser, var urlBase: String, val handle: String = "
 
 
 class BrowsePage(browser: Browser, urlBase: String, handle: String,
-                 url: String = "$urlBase$handle/browse?order=DESC&rpp=100&sort_by=2&etal=-1&offset=$0&type=dateissued") :
+    url: String = "$urlBase$handle/browse?order=DESC&rpp=100&sort_by=2&etal=-1&offset=$0&type=dateissued") :
         OaiPage(browser, urlBase, handle, url) {
 
     private val nextPageLink by lazy {
@@ -80,7 +81,7 @@ class BrowsePage(browser: Browser, urlBase: String, handle: String,
 }
 
 class ArtifactPage(browser: Browser, urlBase: String, handle: String,
-                   val key: String = handle.toKey().replaceFirst("_handle_", "")) : OaiPage(browser, urlBase, handle) {
+    val key: String = handle.toKey().replaceFirst("_handle_", "")) : OaiPage(browser, urlBase, handle) {
 
     val content by lazy {
         `$`("div#ds-body", 0)

@@ -63,12 +63,8 @@ class Dashboard : View() {
                                     isDefaultButton = true
 
                                     setOnAction {
-                                        moodleController.tryLogin(
-                                                url.text,
-                                                username.text,
-                                                password.text,
-                                                remember.isSelected
-                                        )
+                                        moodleController.tryLogin(url.text, username.text, password.text,
+                                            remember.isSelected)
                                     }
                                 }
                                 button("Exit") {
@@ -164,8 +160,8 @@ class Dashboard : View() {
                             button("Download") {
                                 hboxConstraints { margin = Insets(5.0) }
                                 setOnAction {
-                                    moodleController.downloadTo(downloadTo.text,
-                                            coursesSelectionModel?.selectedItems!!, remember.isSelected, statusUpdater)
+                                    moodleController.downloadTo(downloadTo.text, coursesSelectionModel?.selectedItems!!,
+                                        remember.isSelected, statusUpdater)
                                 }
                             }
                         }
