@@ -3,8 +3,7 @@ package ee.moodle.fx
 import ee.moodle.Course
 import ee.moodle.Moodle
 import javafx.application.Platform
-import tornadofx.Controller
-import tornadofx.FX
+import tornadofx.*
 import java.nio.file.Paths
 
 class MoodleController : Controller() {

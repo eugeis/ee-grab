@@ -2,10 +2,9 @@ package ee.moodle.fx
 
 import javafx.event.EventHandler
 import javafx.stage.Stage
-import tornadofx.App
-import tornadofx.importStylesheet
+import tornadofx.*
 
-open class MoodleApp() : App() {
+open class MoodleApp : App() {
     override val primaryView = Dashboard::class
     val moodleController: MoodleController by inject()
 

@@ -1,9 +1,6 @@
 package ee.moodle.fx
 
-import tornadofx.Stylesheet
-import tornadofx.box
-import tornadofx.cssclass
-import tornadofx.px
+import tornadofx.*
 
 class Styles : Stylesheet() {
     companion object {
