@@ -4,6 +4,7 @@ import ee.moodle.Course
 import javafx.animation.KeyFrame
 import javafx.animation.Timeline
 import javafx.application.Platform
+import javafx.beans.property.Property
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
 import javafx.collections.FXCollections
@@ -29,7 +30,7 @@ class Dashboard : View() {
     var courses = FXCollections.observableArrayList<Course>()
     var coursesSelectionModel: TableView.TableViewSelectionModel<Course>? = null
     var table: TableView<Course>? = null
-    var status: StringProperty = SimpleStringProperty()
+    var status: SimpleStringProperty = SimpleStringProperty()
     var statusUpdater: (String) -> Unit = {
         Platform.runLater { status.value = it }
     }
@@ -117,7 +118,7 @@ class Dashboard : View() {
                 table = tableview(courses) {
                     coursesSelectionModel = selectionModel
                     selectionModel.selectionMode = SelectionMode.MULTIPLE
-                    column("Course", Course::title).remainingWidth()
+                    column("Course", Course::titleProperty).remainingWidth()
                     columnResizePolicy = SmartResize.POLICY
                 }
             }
@@ -239,3 +240,6 @@ class Dashboard : View() {
         timelineY.play();
     }
 }
+
+val Course.titleProperty: Property<String>
+    get() = SimpleStringProperty(title)
