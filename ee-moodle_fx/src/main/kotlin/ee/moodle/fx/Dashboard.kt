@@ -49,7 +49,7 @@ class Dashboard : View() {
                                 label("URL") {
                                     hboxConstraints { margin = Insets(5.0) }
                                 }
-                                url = textfield("http://www.lza.de/intern") {
+                                url = textfield("https://www.lza.de/intern") {
                                     hboxConstraints {
                                         hGrow = Priority.ALWAYS
                                         margin = Insets(5.0)

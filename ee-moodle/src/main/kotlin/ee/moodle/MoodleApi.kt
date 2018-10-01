@@ -101,13 +101,14 @@ class LoginPage(browser: Browser, urlBase: String, url: String = "$urlBase/login
 class DashboardPage(browser: Browser, urlBase: String, url: String = "$urlBase/my/") :
         MoodlePage(browser, urlBase, url) {
     private val courseOverview by lazy {
-        waitFor { presenceOfElementLocated(By.cssSelector("div[data-block='course_overview']")) }
-        `$`("div[data-block='course_overview']", 0)
+        waitFor { presenceOfElementLocated(By.ByCssSelector("div.course_list")) }
+        `$`("div.course_list", 0)
     }
 
     val courses by lazy {
         courseOverview.`$`("a[href*='$urlBase/course/']").map {
             Course(it.getAttribute("title").trim(), it.getAttribute("href"))
+            //https://www.lza.de/intern/course/view.php?id=73
         }
     }
 
@@ -294,9 +295,9 @@ class Moodle() {
     fun login(urlBase: String, username: String, password: String): Result<DashboardPage> {
         val ret: Result<DashboardPage>
         val currentBrowser = startBrowser()
-        var loginPage: LoginPage = LoginPage(currentBrowser, urlBase)
+        var loginPage = LoginPage(currentBrowser, urlBase)
         loginPage.toUrlIfNotCurrent()
-        if (loginPage.waitFor({ ExpectedCondition { loginPage.verifyAt() } })) {
+        if (loginPage.waitFor { ExpectedCondition { loginPage.verifyAt() } }) {
             ret = loginPage.login(username, password)
             if (ret.ok) {
                 courses.clear()

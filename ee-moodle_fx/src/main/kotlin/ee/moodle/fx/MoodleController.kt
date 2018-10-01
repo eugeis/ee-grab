@@ -52,6 +52,7 @@ class MoodleController : Controller() {
 
     fun tryLogin(url: String, username: String, password: String, remember: Boolean) {
         runAsync {
+            moodle.logout()
             moodle.login(url, username, password)
         } ui { result ->
 
