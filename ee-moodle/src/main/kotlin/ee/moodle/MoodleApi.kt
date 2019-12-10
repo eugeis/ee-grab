@@ -18,10 +18,10 @@ data class Result<out T>(val ok: Boolean = true, val message: String = "", val v
 }
 
 data class Course(val title: String, val link: String, val id: String = link.substringAfterLast("id="),
-    val key: String = title.toKey())
+                  val key: String = title.toKey())
 
 data class Resource(val title: String, val link: String, val type: ResourceType,
-    val id: String = link.substringAfterLast("id="), val key: String = "${title.toKey()}_$id")
+                    val id: String = link.substringAfterLast("id="), val key: String = "${title.toKey()}_$id")
 
 enum class ResourceType {
     UNKNOWN("html"), LINK("html"), PDF("pdf"), DOC("doc"), JPEG("jpeg");
@@ -119,8 +119,8 @@ class DashboardPage(browser: Browser, urlBase: String, url: String = "$urlBase/m
     fun toCoursePage(course: Course): CoursePage {
         toUrlIfNotCurrent()
         val ret = CoursePage(browser, urlBase, course)
-        browser.to({ ret })
-        return browser.at({ ret })
+        browser.to { ret }
+        return browser.at { ret }
     }
 
     fun downloadTo(target: Path, statusUpdater: (String) -> Unit = {}) {
@@ -219,7 +219,7 @@ class CoursePage(browser: Browser, urlBase: String, val course: Course) : Moodle
                             statusUpdater(msg)
                         }
                     }
-                    else                               -> {
+                    else -> {
                         val resourcePage = toResourcePage(resource)
                         localLink = resourcePage.downloadTo(coursePath)
                     }
@@ -259,13 +259,13 @@ class ResourcePage(browser: Browser, urlBase: String, val resource: Resource) :
                     val targetFile = target.resolve(localLink)
                     if (!targetFile.exists()) {
                         localLink = browser.downloadFile(img.getAttribute("src"), target, resource.key,
-                            src.substringAfterLast("."))
+                                src.substringAfterLast("."))
                     }
                 } catch (e: Exception) {
                     println("Download of $localLink not possible because of $e")
                 }
             }
-            else              -> {
+            else -> {
                 if (browser.currentUrl.startsWith(urlBase)) {
                     localLink = "${resource.key}.${resource.type.ext}"
                     if (divMain != null) {
@@ -295,7 +295,7 @@ class Moodle() {
     fun login(urlBase: String, username: String, password: String): Result<DashboardPage> {
         val ret: Result<DashboardPage>
         val currentBrowser = startBrowser()
-        var loginPage = LoginPage(currentBrowser, urlBase)
+        val loginPage = LoginPage(currentBrowser, urlBase)
         loginPage.toUrlIfNotCurrent()
         if (loginPage.waitFor { ExpectedCondition { loginPage.verifyAt() } }) {
             ret = loginPage.login(username, password)
@@ -312,11 +312,11 @@ class Moodle() {
 
     private fun startBrowser(): Browser {
         if (browser == null) {
-            try {
-                browser = Browser.new(ChromeDriver())
+            browser = try {
+                Browser.new(ChromeDriver())
             } catch (e: Exception) {
                 System.setProperty("webdriver.chrome.driver", "/Users/ee/d/ee-grab/ee-grab/drivers/chromedriver");
-                browser = Browser.new(ChromeDriver())
+                Browser.new(ChromeDriver())
             }
         }
         return browser!!

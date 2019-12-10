@@ -1,1 +1,1 @@
-include 'ee-grab', 'ee-fiveh', 'ee-rulit', 'ee-moodle', 'ee-moodle_fx', 'ee-unisa', 'ee-brill'
+include 'ee-grab', 'ee-fiveh', 'ee-rulit', 'ee-moodle', 'ee-moodle_fx', 'ee-unisa', 'ee-brill', 'ee-sharepoint'

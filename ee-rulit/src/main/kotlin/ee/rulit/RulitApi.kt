@@ -51,7 +51,7 @@ fun downloadTo(bookName: String, target: Path) {
 
     Browser.drive {
         var curentPage: BookPage? = BookPage(this, bookName, 1)
-        to({ curentPage!! })
+        to { curentPage!! }
         while (curentPage != null) {
             content.addAll(curentPage.content())
             curentPage = curentPage.nextPage()
