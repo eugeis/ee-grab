@@ -1,13 +1,25 @@
 package ee.sharepoint
 
+import com.google.common.collect.Maps
+import com.google.common.collect.Sets
+import ee.common.cr.waitFor
+import ee.common.ext.safe
 import ee.grab.core.Browser
 import ee.grab.core.Page
 import ee.grab.libs.delegatesTo
-import org.openqa.selenium.By
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import org.openqa.selenium.*
+import org.openqa.selenium.firefox.FirefoxDriver
+import org.openqa.selenium.firefox.FirefoxOptions
+import org.openqa.selenium.remote.CapabilityType
 import org.slf4j.LoggerFactory
 import java.io.File
+import java.nio.file.Files
 import java.nio.file.Path
-
+import java.nio.file.StandardCopyOption
+import java.util.concurrent.TimeUnit
 
 class RootFolderPage(browser: Browser, val name: String, url: String) : Page(browser, url) {
     private val log = LoggerFactory.getLogger(javaClass)
@@ -45,25 +57,71 @@ class RootFolderPage(browser: Browser, val name: String, url: String) : Page(bro
 }
 
 open class SpItem(var name: String, var url: String)
-class SpFolder(name: String="", url: String="",
+class SpFolder(name: String = "", url: String = "",
                var folders: List<SpFolder> = emptyList(), var files: List<SpFile> = emptyList()) : SpItem(name, url)
 
-class SpFile(name: String="", url: String="", val type: String="") : SpItem(name, url)
+class SpFile(name: String = "", url: String = "", val type: String = "") : SpItem(name, url)
 
-fun browse(rootFolder: SpFolder, target: Path) {
-    val log = LoggerFactory.getLogger("SharepointPage")
-    val documents: MutableList<String> = arrayListOf()
 
-    Browser.drive {
-        val queue = Queue<SpFolder>()
+class Queue<T>(var items: MutableList<T> = mutableListOf()) {
+    fun dequeue(): T? = if (items.isEmpty()) {
+        null
+    } else {
+        items.removeAt(0)
+    }
 
-        to(rootFolder.url)
+    fun peek(): T? = items[0]
+}
+
+class SharepointGrab(val rootTarget: Path) {
+    private val log = LoggerFactory.getLogger("SharepointGrab")
+
+    private val browser: Browser
+    private val rootTargetFile = rootTarget.toFile()
+
+    init {
+
+        val profile = FirefoxOptions()
+
+        profile.addPreference("browser.download.folderList", 2)
+        profile.addPreference("browser.download.manager.showWhenStarting", false)
+        profile.addPreference("browser.download.dir", rootTarget.toRealPath().toString())
+        profile.addPreference("browser.helperApps.neverAsk.openFile",
+                "text/csv,application/x-msexcel,application/excel,application/x-excel,application/vnd.ms-excel," +
+                        "image/png,image/jpeg,text/html,text/plain,application/msword,application/xml")
+        profile.addPreference("browser.helperApps.neverAsk.saveToDisk",
+                "text/csv,application/x-msexcel,application/excel,application/x-excel,application/vnd.ms-excel," +
+                        "image/png,image/jpeg,text/html,text/plain,application/msword,application/xml")
+        profile.addPreference("browser.helperApps.alwaysAsk.force", false)
+        profile.addPreference("browser.download.manager.alertOnEXEOpen", false)
+        profile.addPreference("browser.download.manager.focusWhenStarting", false)
+        profile.addPreference("browser.download.manager.useWindow", false)
+        profile.addPreference("browser.download.manager.showAlertOnComplete", false)
+        profile.addPreference("browser.download.manager.closeWhenDone", false)
+
+        val driver = FirefoxDriver(profile)
+        browser = Browser.new(driver)
+
+        driver.manage().timeouts().pageLoadTimeout(5, TimeUnit.SECONDS)
+    }
+
+    fun login(url: String, sleepForManualLogin: Long) {
+        browser.to(url)
         //login manually
+        if (sleepForManualLogin > 0) {
+            Thread.sleep(sleepForManualLogin)
+        }
+    }
+
+    fun browse(name: String, url: String): SpFolder {
+        val rootFolder = SpFolder(name, url)
+
+        val queue = Queue<SpFolder>()
 
         var currentFolder: SpFolder? = rootFolder
         while (currentFolder != null) {
-            val page = RootFolderPage(this, currentFolder.name, currentFolder.url)
-            to { page }
+            val page = RootFolderPage(browser, currentFolder.name, currentFolder.url)
+            browser.to { page }
 
             val items = page.items()
 
@@ -76,45 +134,69 @@ fun browse(rootFolder: SpFolder, target: Path) {
                     files.add(it)
                 }
             }
-            currentFolder.files = files
-            currentFolder.folders = folders
 
-            queue.items.addAll(folders)
+            if (files.isNotEmpty()) {
+                currentFolder.files = files
+            }
+
+            if (folders.isNotEmpty()) {
+                currentFolder.folders = folders
+                queue.items.addAll(folders)
+            }
 
             currentFolder = queue.dequeue()
         }
-    }
-    log.info("{}", documents.size)
-}
-
-fun SpFolder.create(target: File) {
-    val folder = File(target, name)
-    if (!folder.exists()) {
-        folder.mkdir()
+        return rootFolder
     }
 
-    folders.forEach {
-        it.create(folder)
+    fun download(rootFolder: SpFolder) {
+        rootFolder.download(rootTarget.toFile())
     }
 
-    files.forEach {
-        it.create(folder)
-    }
-}
+    fun SpFolder.download(target: File) {
+        val folder = File(target, name)
+        if (!folder.exists()) {
+            folder.mkdir()
+        }
 
-fun SpFile.create(target: File) {
-    val file = File(target, name)
-    if (!file.exists()) {
-        file.createNewFile()
-    }
-}
+        folders.forEach {
+            it.download(folder)
+        }
 
-class Queue<T>(var items: MutableList<T> = mutableListOf()) {
-    fun dequeue(): T? = if (items.isEmpty()) {
-        null
-    } else {
-        items.removeAt(0)
+        files.forEach {
+            it.download(folder)
+        }
     }
 
-    fun peek(): T? = items[0]
+    fun SpFile.download(target: File) {
+        val fileName = "$name.${url.substringAfterLast(".")}"
+
+        val targetFile = File(target, fileName).toPath()
+        val downloadedFile = File(rootTargetFile, fileName)
+        if (downloadedFile.exists()) {
+            downloadedFile.delete()
+        }
+
+        GlobalScope.launch {
+            safe(log, "download $targetFile") {
+                log.info("download {}", targetFile)
+                browser.get(url)
+            }
+        }
+
+
+        val downloaded = runBlocking {
+            waitFor(30) {
+                downloadedFile.exists()
+            }
+        }
+
+        if (downloaded) {
+            safe(log, "move $downloadedFile to $targetFile") {
+                Files.move(downloadedFile.toPath(), targetFile, StandardCopyOption.REPLACE_EXISTING)
+            }
+        } else {
+            log.warn("can't download {}", targetFile)
+        }
+    }
 }

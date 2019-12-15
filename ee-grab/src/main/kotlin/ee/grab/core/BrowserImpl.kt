@@ -50,7 +50,7 @@ internal class BrowserImpl(val driver: WebDriver) : Browser, WebDriver by driver
             if (driver is JavascriptExecutor) {
                 return when (async) {
                     false -> driver.executeScript(script(), *args)
-                    else  -> driver.executeAsyncScript(script(), *args)
+                    else -> driver.executeAsyncScript(script(), *args)
                 }
             }
 
@@ -77,8 +77,8 @@ internal class BrowserImpl(val driver: WebDriver) : Browser, WebDriver by driver
                 if (entity != null) {
                     val bis = BufferedInputStream(entity.content)
                     val currentFileName =
-                        response.getHeaders("Content-Disposition").firstOrNull()?.value?.substringAfterLast(
-                            "filename=\"")?.substringBeforeLast("\"")
+                            response.getHeaders("Content-Disposition").firstOrNull()?.value?.substringAfterLast(
+                                    "filename=\"")?.substringBeforeLast("\"")
                     if (currentFileName != null) {
                         ret = "$prefix${URLDecoder.decode(currentFileName, "UTF-8").toKey()}"
                     } else {
@@ -87,20 +87,18 @@ internal class BrowserImpl(val driver: WebDriver) : Browser, WebDriver by driver
                             ret = "$prefix$fileName.${type.name}"
                         }
                     }
-                    path = target.resolve(ret)
-                    if (!path.exists()) {
-                        path.parent.mkdirs()
-                        val outputFile = path.toFile()
-                        val bos = BufferedOutputStream(FileOutputStream(outputFile))
-                        var read = bis.read()
-                        while (read != -1) {
-                            bos.write(read)
-                            read = bis.read()
-                        }
-                        bis.close()
-                        bos.close()
-                        println("Downloaded $outputFile " + outputFile.length() + " bytes. " + entity!!.contentType)
+
+                    path.parent.mkdirs()
+                    val outputFile = path.toFile()
+                    val bos = BufferedOutputStream(FileOutputStream(outputFile))
+                    var read = bis.read()
+                    while (read != -1) {
+                        bos.write(read)
+                        read = bis.read()
                     }
+                    bis.close()
+                    bos.close()
+                    println("Downloaded $outputFile " + outputFile.length() + " bytes. " + entity.contentType)
                 } else {
                     println("Download failed of $ret!")
                 }
