@@ -17,3 +17,11 @@ gradle-app.setting
 /.idea/
 /**/*.iml
 /build.gradle
+/ee-brill/out/production/classes/
+/ee-fiveh/out/production/classes/
+/ee-grab/out/production/classes/
+/ee-moodle/out/production/classes/
+/ee-moodle_fx/out/production/
+/ee-rulit/out/production/classes/
+/ee-sharepoint/out/
+/ee-unisa/out/production/classes/
